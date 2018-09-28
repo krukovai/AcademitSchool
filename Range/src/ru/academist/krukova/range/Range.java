@@ -3,7 +3,6 @@ package ru.academist.krukova.range;
 public class Range {
     private double from;
     private double to;
-    public static final double epsilon = 1.0e-10;
 
     public Range(double from, double to) {
         this.from = from;
@@ -31,7 +30,7 @@ public class Range {
     }
 
     public boolean isInside(double number) {
-        return (number - from >= -epsilon) && (to - number >= -epsilon);
+        return (number >= from) && (number <= to);
     }
 
     public Range getCrossing(Range range) {
@@ -48,45 +47,28 @@ public class Range {
     }
 
     public Range[] getMerger(Range range) {
-        Range[] mergerRange = new Range[2];
-
-        if (this.isInside(range.from) || (range.isInside(this.from))) {
-            mergerRange[0] = new Range(0, 0);
-            mergerRange[0].setFrom((this.from < range.from) ? this.from : range.from);
-            mergerRange[0].setTo((this.to > range.to) ? this.to : range.to);
+        if ((this.from <= range.from && range.from <= this.to) || (range.from <= this.from && this.from <= range.to)) {
+            return new Range[]{new Range((this.from < range.from) ? this.from : range.from, (this.to > range.to) ? this.to : range.to)};
         } else {
-            mergerRange[0] = new Range(this.from, this.to);
-            mergerRange[1] = new Range(range.from, range.to);
+            return new Range[]{new Range(this.from, this.to), new Range(range.from, range.to)};
         }
-
-        return mergerRange;
     }
 
     public Range[] getResidual(Range range) {
-        Range[] residualRange = new Range[2];
-
-        Range crossRange = this.getCrossing(range);
-
-        if (crossRange.getLength() == this.getLength()) {
-            return residualRange;
+        if (this.from >= range.from && this.to <= range.to) {
+            return null;
         }
 
-        if (crossRange.getLength() == 0) {
-            residualRange[0] = this;
-            return residualRange;
+        if (this.from > range.to || this.to < range.from) {
+            return new Range[]{new Range(this.from, this.to)};
         }
 
-        residualRange[0] = this;
-
-        if (this.from == crossRange.from) {
-            residualRange[0] = new Range(crossRange.to, this.to);
-        } else if (this.to == crossRange.to) {
-            residualRange[0] = new Range(this.from, crossRange.from);
+        if (this.from >= range.from && this.to > range.to) {
+            return new Range[]{new Range(range.to, this.to)};
+        } else if (this.to <= range.to && this.from < range.from) {
+            return new Range[]{new Range(this.from, range.from)};
         } else {
-            residualRange[0] = new Range(this.from, crossRange.from);
-            residualRange[1] = new Range(crossRange.to, this.to);
+            return new Range[]{new Range(this.from, range.from), new Range(range.to, this.to)};
         }
-
-        return residualRange;
     }
 }
