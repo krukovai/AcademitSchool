@@ -11,10 +11,10 @@ public class Main {
         System.out.println("Введите число для проверки вхождения в диапазон");
         double number = scanner.nextDouble();
 
-        Range range1 = new Range(4, 25);
-        Range range2 = new Range(4, 15);
+        Range range1 = new Range(4, 8);
+        Range range2 = new Range(8, 16);
         Range crossRange = range1.getCrossing(range2);
-        Range[] mergerRange = range1.getMerger(range2);
+        Range[] mergerRange = range1.getUnion(range2);
         Range[] residualRange = range1.getResidual(range2);
 
         System.out.println("Длина диапазона: " + range1.getLength());
@@ -32,7 +32,7 @@ public class Main {
         System.out.println("Диапазон объединения: " + mergerRange[0].getFrom() + " .. " + mergerRange[0].getTo() + ", " + mergerRange[1].getFrom() + " .. " + mergerRange[1].getTo());
         }
 
-        if (residualRange == null) {
+        if (residualRange.length == 0) {
             System.out.println("Диапазон разности: пустой диапазон");
         } else if (residualRange.length == 1) {
             System.out.println("Диапазон разности: " + residualRange[0].getFrom() + " .. " + residualRange[0].getTo());
