@@ -34,7 +34,7 @@ public class Range {
     }
 
     public Range getCrossing(Range range) {
-        if (Math.max(this.from, range.from) <= Math.min(this.to, range.to)) {
+        if (Math.max(this.from, range.from) < Math.min(this.to, range.to)) {
             double crossFrom = Math.max (this.from, range.from);
             double crossTo = Math.min (this.to, range.to);
             return new Range(crossFrom, crossTo);
