@@ -2,194 +2,148 @@ package vector;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 public class Vector {
-    private int n;
-    private double[] vector;
+    private double[] components;
     private static final int TURNING_INDEX = -1;
 
-    public Vector(int n) throws IllegalArgumentException {
-        if (n <= 0) {
-            throw new IllegalArgumentException("Некорректно задана размерность вектора");
+    public Vector(int vectorSize) throws IllegalArgumentException {
+        if (vectorSize <= 0) {
+            throw new IllegalArgumentException("некорректно задана размерность вектора");
         }
 
-        vector = new double[n];
-        this.n = n;
-
-        for (int i = 0; i < n; ++i) {
-            vector[i] = 0;
-        }
+        this.components = new double[vectorSize];
     }
 
     public Vector(Vector vector) {
-        this.vector = vector.vector;
-        this.n = vector.n;
+        if (vector.components.length == 0) {
+            throw new IllegalArgumentException("некорректно задана размерность вектора");
+        }
+
+        this.components = vector.components.clone();
     }
 
     public Vector(double[] array) {
-        this.vector = array;
-        n = array.length;
-    }
-
-    public Vector(int n, double[] array) throws IllegalArgumentException {
-        if (n <= 0) {
-            throw new IllegalArgumentException("Некорректно задана размерность вектора");
+        if (array.length == 0) {
+            throw new IllegalArgumentException("некорректно задана размерность вектора");
         }
 
-        vector = new double[n];
-        this.n = n;
+        this.components = array.clone();
+    }
 
-        for (int i = 0; i < n; ++i) {
-            if (i >= array.length) {
-                this.vector[i] = 0;
-            } else {
-                this.vector[i] = array[i];
-            }
+    public Vector(int vectorSize, double[] arrayRow) throws IllegalArgumentException {
+        if (arrayRow.length == 0 || vectorSize <= 0) {
+            throw new IllegalArgumentException("некорректно задана размерность вектора");
         }
+
+        this.components = Arrays.copyOf(arrayRow, vectorSize);
     }
 
-    public int getN() {
-        return n;
-    }
-
-    public double[] getVector() {
-        return vector;
-    }
-
-    public void setN(int n) {
-        this.n = n;
-    }
-
-    public void setVector(double[] vector) {
-        this.vector = vector;
+    public double[] getComponents() {
+        return this.components.clone();
     }
 
     public int getSize() {
-        return n;
+        return this.components.length;
     }
 
-
     public String toString() {
-        String s = String.join(", ", Arrays.toString(this.vector));
+        String s = Arrays.toString(this.components);
 
         return "{" + s.substring(1, s.length() - 1) + "}";
     }
 
-    public Vector addVector(Vector vector) throws IllegalArgumentException {
-        Vector vectorSum = new Vector(Math.max(this.n, vector.n));
+    public Vector addVector(Vector vector) {
+        int maxLength = Math.max(this.components.length, vector.components.length);
+        int minLength = Math.min(this.components.length, vector.components.length);
 
-        int minLength = Math.min(this.n, vector.n);
-        for (int i = 0; i < vectorSum.n; ++i) {
-            if ((i >= minLength) && (minLength == vector.n)) {
-                vectorSum.vector[i] = this.vector[i];
-            } else if ((i >= minLength) && (minLength == this.n)) {
-                vectorSum.vector[i] = vector.vector[i];
-            } else {
-                vectorSum.vector[i] = this.vector[i] + vector.vector[i];
-            }
+        if (minLength == vector.components.length) {
+            vector.components = Arrays.copyOf(vector.components, maxLength);
+        } else if (minLength == this.components.length) {
+            this.components = Arrays.copyOf(this.components, maxLength);
         }
 
-        return vectorSum;
-    }
-
-    public Vector subtractVector(Vector vector) throws IllegalArgumentException {
-        Vector vectorDifference = new Vector(Math.max(this.n, vector.n));
-
-        int minLength = Math.min(this.n, vector.n);
-        for (int i = 0; i < vectorDifference.n; ++i) {
-            if ((i >= minLength) && (minLength == vector.n)) {
-                vectorDifference.vector[i] = this.vector[i];
-            } else if ((i >= minLength) && (minLength == this.n)) {
-                vectorDifference.vector[i] = 0 - vector.vector[i];
-            } else {
-                vectorDifference.vector[i] = this.vector[i] - vector.vector[i];
-            }
+        for (int i = 0; i < maxLength; ++i) {
+            this.components[i] = this.components[i] + vector.components[i];
         }
 
-        return vectorDifference;
-    }
+        return this;
+}
 
-    public Vector multiplyScalar(double scalar) throws IllegalArgumentException {
-        Vector vectorMultiplication = new Vector(this.n);
+    public Vector subtractVector(Vector vector) {
+        int maxLength = Math.max(this.components.length, vector.components.length);
+        int minLength = Math.min(this.components.length, vector.components.length);
 
-        for (int i = 0; i < this.n; ++i) {
-            vectorMultiplication.vector[i] = this.vector[i] * scalar;
+        if (minLength == vector.components.length) {
+            vector.components = Arrays.copyOf(vector.components, maxLength);
+        } else if (minLength == this.components.length) {
+            this.components = Arrays.copyOf(this.components, maxLength);
         }
 
-        return vectorMultiplication;
-    }
-
-    public Vector expandVector() throws IllegalArgumentException {
-        Vector vectorTurning = new Vector(this.n);
-
-        for (int i = 0; i < this.n; ++i) {
-            vectorTurning.vector[i] = this.vector[i] * TURNING_INDEX;
+        for (int i = 0; i < maxLength; ++i) {
+            this.components[i] = this.components[i] - vector.components[i];
         }
 
-        return vectorTurning;
+        return this;
     }
 
-    public double getVectorLength() {
+    public Vector multiplyScalar(double scalar) {
+        for (int i = 0; i < this.components.length; ++i) {
+            this.components[i] = this.components[i] * scalar;
+        }
+
+        return this;
+    }
+
+    public Vector expandVector() {
+        return this.multiplyScalar(-1);
+    }
+
+    public double getLength() {
         double sum = 0;
 
-        for (int i = 0; i < this.n; ++i) {
-            sum += Math.pow(this.vector[i], 2);
+        for (double e : this.components) {
+            sum += Math.pow(e, 2);
         }
+
         return Math.sqrt(sum);
     }
 
-    public double getVectorComponent(int componentIndex) throws IllegalArgumentException {
-        if (componentIndex >= vector.length || componentIndex < 0) {
-            throw new IllegalArgumentException("Значение индекса за пределами массива");
+    public double getComponent(int componentIndex) throws IndexOutOfBoundsException {
+        if (componentIndex >= this.components.length || componentIndex < 0) {
+            throw new IndexOutOfBoundsException("значение указанного индекса за пределами массива");
         }
 
-        return this.vector[componentIndex];
+        return this.components[componentIndex];
     }
 
-    public void setVectorComponent(int componentIndex, double component) {
-        this.vector[componentIndex] = component;
-    }
-
-    public static Vector getVectorsSum(Vector vector1, Vector vector2) throws IllegalArgumentException {
-        Vector vectorSum = new Vector(Math.max(vector1.n, vector2.n));
-
-        int minLength = Math.min(vector1.n, vector2.n);
-        for (int i = 0; i < vectorSum.n; ++i) {
-            if ((i >= minLength) && (minLength == vector2.n)) {
-                vectorSum.vector[i] = vector1.vector[i];
-            } else if ((i >= minLength) && (minLength == vector1.n)) {
-                vectorSum.vector[i] = vector2.vector[i];
-            } else {
-                vectorSum.vector[i] = vector1.vector[i] + vector2.vector[i];
-            }
+    public void setComponent(int componentIndex, double component) throws IndexOutOfBoundsException {
+        if (componentIndex >= this.components.length || componentIndex < 0) {
+            throw new IndexOutOfBoundsException("значение указанного индекса за пределами массива");
         }
 
-        return vectorSum;
+        this.components[componentIndex] = component;
     }
 
-    public static Vector getVectorsSubtract(Vector vector1, Vector vector2) throws IllegalArgumentException {
-        Vector vectorDifference = new Vector(Math.max(vector1.n, vector2.n));
+    public static Vector getVectorsSum(Vector vector1, Vector vector2) {
+        Vector vectorSum = new Vector(vector1);
 
-        int minLength = Math.min(vector1.n, vector2.n);
-        for (int i = 0; i < vectorDifference.n; ++i) {
-            if ((i >= minLength) && (minLength == vector2.n)) {
-                vectorDifference.vector[i] = vector1.vector[i];
-            } else if ((i >= minLength) && (minLength == vector1.n)) {
-                vectorDifference.vector[i] = 0 - vector2.vector[i];
-            } else {
-                vectorDifference.vector[i] = vector1.vector[i] - vector2.vector[i];
-            }
-        }
+        return vectorSum.addVector(vector2);
+    }
 
-        return vectorDifference;
+    public static Vector getVectorsSubtract(Vector vector1, Vector vector2) {
+        Vector vectorDifference = new Vector(vector1);
+
+        return vectorDifference.subtractVector(vector2);
     }
 
     public static double getVectorsMultiply(Vector vector1, Vector vector2) {
         double sum = 0;
 
-        int minLength = Math.min(vector1.n, vector2.n);
+        int minLength = Math.min(vector1.components.length, vector2.components.length);
         for (int i = 0; i < minLength; ++i) {
-            sum += vector1.vector[i] * vector2.vector[i];
+            sum += vector1.components[i] * vector2.components[i];
         }
 
         return sum;
@@ -197,16 +151,22 @@ public class Vector {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
         Vector vector1 = (Vector) o;
-        return n == vector1.n && Arrays.equals(vector, vector1.vector);
+        return components.length == vector1.components.length && Arrays.equals(components, vector1.components);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(n);
-        result = 31 * result + Arrays.hashCode(vector);
+        int result = Objects.hash(components.length);
+        result = 31 * result + Arrays.hashCode(components);
+
         return result;
     }
 }
