@@ -1,14 +1,12 @@
 package vector;
 
 import java.util.Arrays;
-import java.util.Objects;
-import java.util.StringJoiner;
 
 public class Vector {
     private double[] components;
     private static final int TURNING_INDEX = -1;
 
-    public Vector(int vectorSize) throws IllegalArgumentException {
+    public Vector(int vectorSize) {
         if (vectorSize <= 0) {
             throw new IllegalArgumentException("некорректно задана размерность вектора");
         }
@@ -17,10 +15,6 @@ public class Vector {
     }
 
     public Vector(Vector vector) {
-        if (vector.components.length == 0) {
-            throw new IllegalArgumentException("некорректно задана размерность вектора");
-        }
-
         this.components = vector.components.clone();
     }
 
@@ -32,7 +26,7 @@ public class Vector {
         this.components = array.clone();
     }
 
-    public Vector(int vectorSize, double[] arrayRow) throws IllegalArgumentException {
+    public Vector(int vectorSize, double[] arrayRow) {
         if (arrayRow.length == 0 || vectorSize <= 0) {
             throw new IllegalArgumentException("некорректно задана размерность вектора");
         }
@@ -58,31 +52,35 @@ public class Vector {
         int maxLength = Math.max(this.components.length, vector.components.length);
         int minLength = Math.min(this.components.length, vector.components.length);
 
-        if (minLength == vector.components.length) {
-            vector.components = Arrays.copyOf(vector.components, maxLength);
-        } else if (minLength == this.components.length) {
+        if (maxLength != this.components.length) {
             this.components = Arrays.copyOf(this.components, maxLength);
         }
 
         for (int i = 0; i < maxLength; ++i) {
-            this.components[i] = this.components[i] + vector.components[i];
+            if (i == minLength && minLength == vector.components.length) {
+                break;
+            } else {
+                this.components[i] += vector.components[i];
+            }
         }
 
         return this;
-}
+    }
 
     public Vector subtractVector(Vector vector) {
         int maxLength = Math.max(this.components.length, vector.components.length);
         int minLength = Math.min(this.components.length, vector.components.length);
 
-        if (minLength == vector.components.length) {
-            vector.components = Arrays.copyOf(vector.components, maxLength);
-        } else if (minLength == this.components.length) {
+        if (maxLength != this.components.length) {
             this.components = Arrays.copyOf(this.components, maxLength);
         }
 
         for (int i = 0; i < maxLength; ++i) {
-            this.components[i] = this.components[i] - vector.components[i];
+            if (i == minLength && minLength == vector.components.length) {
+                break;
+            } else {
+                this.components[i] -= vector.components[i];
+            }
         }
 
         return this;
@@ -90,14 +88,14 @@ public class Vector {
 
     public Vector multiplyScalar(double scalar) {
         for (int i = 0; i < this.components.length; ++i) {
-            this.components[i] = this.components[i] * scalar;
+            this.components[i] *= scalar;
         }
 
         return this;
     }
 
-    public Vector expandVector() {
-        return this.multiplyScalar(-1);
+    public Vector turn() {
+        return this.multiplyScalar(TURNING_INDEX);
     }
 
     public double getLength() {
@@ -151,23 +149,15 @@ public class Vector {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        Vector vector1 = (Vector) o;
-        return components.length == vector1.components.length && Arrays.equals(components, vector1.components);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Vector vector = (Vector) o;
+        return Arrays.equals(components, vector.components);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(components.length);
-        result = 31 * result + Arrays.hashCode(components);
-
-        return result;
+        return Arrays.hashCode(components);
     }
 }
 

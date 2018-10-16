@@ -28,7 +28,7 @@ public class Main {
             double vectorMultiplication = Vector.getVectorsMultiply(vector1, vector2);
             formattedPrint("Умножение векторов:", Double.toString(vectorMultiplication));
 
-            Vector vectorTurning = vector1.expandVector();
+            Vector vectorTurning = vector1.turn();
             formattedPrint("Разворот вектора:", Arrays.toString(vectorTurning.getComponents()));
 
             vector1.setComponent(1, -10);
