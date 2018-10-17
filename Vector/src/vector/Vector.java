@@ -50,18 +50,13 @@ public class Vector {
 
     public Vector addVector(Vector vector) {
         int maxLength = Math.max(this.components.length, vector.components.length);
-        int minLength = Math.min(this.components.length, vector.components.length);
 
         if (maxLength != this.components.length) {
             this.components = Arrays.copyOf(this.components, maxLength);
         }
 
-        for (int i = 0; i < maxLength; ++i) {
-            if (i == minLength && minLength == vector.components.length) {
-                break;
-            } else {
-                this.components[i] += vector.components[i];
-            }
+        for (int i = 0; i < vector.components.length; ++i) {
+            this.components[i] += vector.components[i];
         }
 
         return this;
@@ -69,18 +64,13 @@ public class Vector {
 
     public Vector subtractVector(Vector vector) {
         int maxLength = Math.max(this.components.length, vector.components.length);
-        int minLength = Math.min(this.components.length, vector.components.length);
 
         if (maxLength != this.components.length) {
             this.components = Arrays.copyOf(this.components, maxLength);
         }
 
-        for (int i = 0; i < maxLength; ++i) {
-            if (i == minLength && minLength == vector.components.length) {
-                break;
-            } else {
-                this.components[i] -= vector.components[i];
-            }
+        for (int i = 0; i < vector.components.length; ++i) {
+            this.components[i] -= vector.components[i];
         }
 
         return this;
@@ -149,8 +139,12 @@ public class Vector {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Vector vector = (Vector) o;
         return Arrays.equals(components, vector.components);
     }
