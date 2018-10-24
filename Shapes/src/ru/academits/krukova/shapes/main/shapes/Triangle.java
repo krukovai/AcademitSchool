@@ -52,40 +52,47 @@ public class Triangle implements Shape {
     }
 
     public double getArea() {
-        double side1 = Math.sqrt(Math.pow(this.x1 - this.x2, 2) + Math.pow(this.y1 - this.y2, 2));
-        double side2 = Math.sqrt(Math.pow(this.x2 - this.x3, 2) + Math.pow(this.y2 - this.y3, 2));
-        double side3 = Math.sqrt(Math.pow(this.x1 - this.x3, 2) + Math.pow(this.y1 - this.y3, 2));
+        double side1 = getSideLength(this.x1, this.y1, this.x2, this.y2);
+        double side2 = getSideLength(this.x2, this.y2, this.x3, this.y3);
+        double side3 = getSideLength(this.x1, this.y1, this.x3, this.y3);
 
-        double halfMeter = (side1 + side2 + side3) / 2;
+        double halfMeter = getPerimeter() / 2;
 
         return Math.sqrt(halfMeter * (halfMeter - side1) * (halfMeter - side2) * (halfMeter - side3));
     }
 
     public double getPerimeter() {
-        double side1 = Math.sqrt(Math.pow(this.x1 - this.x2, 2) + Math.pow(this.y1 - this.y2, 2));
-        double side2 = Math.sqrt(Math.pow(this.x2 - this.x3, 2) + Math.pow(this.y2 - this.y3, 2));
-        double side3 = Math.sqrt(Math.pow(this.x1 - this.x3, 2) + Math.pow(this.y1 - this.y3, 2));
+        double side1 = getSideLength(this.x1, this.y1, this.x2, this.y2);
+        double side2 = getSideLength(this.x2, this.y2, this.x3, this.y3);
+        double side3 = getSideLength(this.x1, this.y1, this.x3, this.y3);
 
         return side1 + side2 + side3;
     }
 
+    public static double getSideLength(double x1, double y1, double x2, double y2) {
+        return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
         Triangle triangle = (Triangle) o;
-        return Double.compare(triangle.x1, x1) == 0 &&
-                Double.compare(triangle.x2, x2) == 0 &&
-                Double.compare(triangle.x3, x3) == 0 &&
-                Double.compare(triangle.y1, y1) == 0 &&
-                Double.compare(triangle.y2, y2) == 0 &&
-                Double.compare(triangle.y3, y3) == 0;
+
+        return triangle.x1 == x1 &&
+                triangle.x2 == x2 &&
+                triangle.x3 == x3 &&
+                triangle.y1 == y1 &&
+                triangle.y2 == y2 &&
+                triangle.y3 == y3;
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(x1, x2, x3, y1, y2, y3);
+        return Double.hashCode(x1) + Double.hashCode(x2) + Double.hashCode(x3) + Double.hashCode(y1) + Double.hashCode(y2) + Double.hashCode(y3);
     }
 
     @Override

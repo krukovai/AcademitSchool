@@ -1,7 +1,5 @@
 package ru.academits.krukova.shapes.main.shapes;
 
-import java.util.Objects;
-
 public class Circle implements Shape {
     private double radius;
 
@@ -31,16 +29,22 @@ public class Circle implements Shape {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
         Circle circle = (Circle) o;
-        return Double.compare(circle.radius, radius) == 0;
+
+        return circle.radius == radius;
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(radius);
+        return Double.hashCode(radius);
     }
 
     @Override

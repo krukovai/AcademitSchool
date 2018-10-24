@@ -13,24 +13,24 @@ public class Main {
         Triangle triangle1 = new Triangle(0, 0, 3, 2, 6, 9);
         Triangle triangle2 = new Triangle(0, 0, 0, 0, 0, 0);
         Rectangle rectangle1 = new Rectangle(1, 1);
-        Rectangle rectangle2 = new Rectangle(100, 100);
+        Rectangle rectangle2 = new Rectangle(12, 44);
         Shape[] shapes = {square1, square2, circle1, circle2, rectangle1, rectangle2, triangle1, triangle2};
 
         try {
             System.out.println("Фигура с максимальной площадью:");
             System.out.println("==========================================================");
-            printArray(getMaxArea(shapes));
-            System.out.println();
+            System.out.println(getMaxAreaShape(shapes));
 
             System.out.println("Фигура со вторым по величине периметром");
             System.out.println("==========================================================");
-            printArray(getSecondPerimeter(shapes));
+            System.out.println(getSecondPerimeterShape(shapes));
+
         } catch (IllegalArgumentException e) {
             System.out.println("Ошибка выполнения программы: " + e.getMessage());
         }
     }
 
-    private static Shape[] getMaxArea(Shape[] shapes) {
+    private static Shape getMaxAreaShape(Shape[] shapes) {
         int shapesArrayLength = shapes.length;
 
         if (shapesArrayLength == 0) {
@@ -38,28 +38,15 @@ public class Main {
         }
 
         if (shapesArrayLength == 1) {
-            return shapes;
+            return shapes[0];
         }
 
         Arrays.sort(shapes, new ShapeAreaComparator());
 
-        int i = shapesArrayLength - 2;
-
-        while (shapes[i].getArea() == shapes[shapesArrayLength - 1].getArea()) {
-            i--;
-
-            if (i < 0) {
-                return shapes;
-            }
-        }
-
-        Shape[] maxAreaShapes = new Shape[shapesArrayLength - 1 - i];
-        System.arraycopy(shapes, i + 1, maxAreaShapes, 0, shapesArrayLength - 1 - i);
-
-        return maxAreaShapes;
+        return shapes[shapes.length - 1];
     }
 
-    private static Shape[] getSecondPerimeter(Shape[] shapes) {
+    private static Shape getSecondPerimeterShape(Shape[] shapes) {
         int shapesArrayLength = shapes.length;
 
         if (shapesArrayLength == 0) {
@@ -67,33 +54,12 @@ public class Main {
         }
 
         if (shapesArrayLength == 1) {
-            return new Shape[0];
+            return null;
         }
 
         Arrays.sort(shapes, new ShapePerimeterComparator());
 
-        int i = 1;
-
-        while (shapes[i].getPerimeter() == shapes[0].getPerimeter()) {
-            i++;
-
-            if (i > shapes.length - 1) {
-                return new Shape[0];
-            }
-        }
-
-        double secondPerimeter = shapes[i].getPerimeter();
-
-        int j = i;
-
-        while (shapes[j].getPerimeter() == secondPerimeter) {
-            j++;
-        }
-
-        Shape[] maxPerimeterShapes = new Shape[j - i];
-        System.arraycopy(shapes, i, maxPerimeterShapes, 0, j - i);
-
-        return maxPerimeterShapes;
+        return shapes[shapes.length - 2];
     }
 
     private static void printArray(Shape[] array) {
