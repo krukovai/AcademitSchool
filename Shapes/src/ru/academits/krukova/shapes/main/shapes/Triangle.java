@@ -1,7 +1,5 @@
 package ru.academits.krukova.shapes.main.shapes;
 
-import java.util.Objects;
-
 public class Triangle implements Shape {
     private double x1;
     private double x2;
@@ -69,16 +67,19 @@ public class Triangle implements Shape {
         return side1 + side2 + side3;
     }
 
-    public static double getSideLength(double x1, double y1, double x2, double y2) {
+    private static double getSideLength(double x1, double y1, double x2, double y2) {
         return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
 
         Triangle triangle = (Triangle) o;
 
@@ -92,7 +93,16 @@ public class Triangle implements Shape {
 
     @Override
     public int hashCode() {
-        return Double.hashCode(x1) + Double.hashCode(x2) + Double.hashCode(x3) + Double.hashCode(y1) + Double.hashCode(y2) + Double.hashCode(y3);
+        final int prime = 31;
+        int hash = prime + Double.hashCode(x1);
+
+        hash = prime * hash + Double.hashCode(x2);
+        hash = prime * hash + Double.hashCode(x3);
+        hash = prime * hash + Double.hashCode(y1);
+        hash = prime * hash + Double.hashCode(y2);
+        hash = prime * hash + Double.hashCode(y3);
+
+        return hash;
     }
 
     @Override

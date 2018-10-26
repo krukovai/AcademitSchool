@@ -1,7 +1,5 @@
 package ru.academits.krukova.shapes.main.shapes;
 
-import java.util.Objects;
-
 public class Square implements Shape {
     private double sideLength;
 

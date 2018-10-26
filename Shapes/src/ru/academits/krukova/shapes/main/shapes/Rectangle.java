@@ -1,7 +1,5 @@
 package ru.academits.krukova.shapes.main.shapes;
 
-import java.util.Objects;
-
 public class Rectangle implements Shape {
     private double width;
     private double height;
@@ -44,7 +42,10 @@ public class Rectangle implements Shape {
 
     @Override
     public int hashCode() {
-        return Double.hashCode(width) + Double.hashCode(height);
+        final int prime = 31;
+        int hash = prime + Double.hashCode(width);
+
+        return prime * hash + Double.hashCode(height);
     }
 
     @Override
